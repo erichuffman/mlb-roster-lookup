@@ -17,7 +17,6 @@ function RosterViewer({teamOptions}) {
       let nextYear = `${parseInt(season) + 1}`;
       fetchRoster(season, nextYear, team).then(
         data => {
-          console.log(data);
           if (data.roster_team_alltime.queryResults.totalSize > 0) { 
             setRoster(data.roster_team_alltime.queryResults.row.map(item => (
               {
@@ -38,7 +37,7 @@ function RosterViewer({teamOptions}) {
         console.warn('There was an error updating the roster:', error);
       });
     } else {
-      if (season !== null) { setSeason(null) }
+      setSeason(null);
     }
     return function cleanup() {
       setStatus('cleanup');
@@ -90,7 +89,6 @@ function RosterViewer({teamOptions}) {
       </p>
     )
   }
-  console.log(status, team, season);
   return (
     <div className="roster-viewer">
       <div className="roster-viewer__options">
