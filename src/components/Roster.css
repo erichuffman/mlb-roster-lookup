@@ -20,12 +20,16 @@
 }
 
 .roster__column {
-  flex: 0 0 20%;
+  flex: 0 0 16%;
   padding: 10px;
 }
 
+.roster__column.active {
+  background-color: yellow;
+}
+
 .roster__column.roster__column--name {
-  flex: 0 0 40%;
+  flex: 0 0 20%;
   font-weight: bold;
 }
 
@@ -38,4 +42,26 @@
 
 .roster__column + .roster__column {
   border-left: 1px solid gray;
+}
+
+.roster__column-info {
+  cursor: help;
+}
+
+.roster__column--filter {
+  text-align: center;
+}
+
+.roster__button-filter {
+  background-color: white;
+  border: 2px solid darkolivegreen;
+  border-radius: 3px;
+  cursor: pointer;
+  display: inline-block;
+  margin: 0 5px;
+  padding: 5px 10px;
+}
+
+.roster__button-filter.active {
+  background-color: yellow;
 }

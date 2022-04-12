@@ -17,8 +17,9 @@ function RosterViewer({teamOptions}) {
       let nextYear = `${parseInt(season) + 1}`;
       fetchRoster(season, nextYear, team).then(
         data => {
-          if (data.roster_team_alltime.queryResults.totalSize > 0) { 
-            setRoster(data.roster_team_alltime.queryResults.row.map(item => (
+          if (data.roster_team_alltime.queryResults.totalSize !== '0') {
+            const roster = data.roster_team_alltime.queryResults.row;
+            setRoster(roster.map(item => (
               {
                 name: item.name_first_last,
                 id: item.player_id,
@@ -26,7 +27,8 @@ function RosterViewer({teamOptions}) {
                 bats: item.bats,
                 throws: item.throws,
               }
-            )))
+            )));
+            setStatus('roster filled');
           } else {
             setStatus('empty');
             setRoster(null);
@@ -89,6 +91,7 @@ function RosterViewer({teamOptions}) {
       </p>
     )
   }
+
   return (
     <div className="roster-viewer">
       <div className="roster-viewer__options">

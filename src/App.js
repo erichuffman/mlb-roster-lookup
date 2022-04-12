@@ -1,6 +1,15 @@
 import { useEffect, useState } from 'react';
+import { GlobalVars, GlobalStyles } from './styles/GlobalStyles';
+import styled from 'styled-components/macro';
 import { fetchTeams } from './utils/mlbEndPoint';
 import RosterViewer from './components/RosterViewer';
+
+const Disclaimer = styled.p`
+  border-top: 1px solid #999999;
+  margin: 20px 0 30px;
+  padding-top: 20px;
+  text-align: center;
+`
 
 function App() {
   const [teamOptions, setTeamOptions] = useState(() => {
@@ -15,7 +24,7 @@ function App() {
           {
             id: item.mlb_org_id,
             value: item.mlb_org_id,
-            text: item.name_display_full,
+            text: item.name_display_brief,
             first_year_of_play: item.first_year_of_play,
             last_year_of_play: item.last_year_of_play,
           }
@@ -29,8 +38,10 @@ function App() {
 
   return (
     <>
-      <RosterViewer teamOptions={teamOptions} />
-      <p className="disclaimer"><small>Data copyright by MLB Advanced Media, L.P. Hat tip to the <a href="https://appac.github.io/mlb-data-api-docs/">MLB Data API Docs</a> from <a href="https://appac.github.io/">Chris Apparicio</a>.</small></p>
+      <GlobalVars />
+      <GlobalStyles />
+      {teamOptions && <RosterViewer teamOptions={teamOptions} />}
+      <Disclaimer><small>Data copyright by MLB Advanced Media, L.P. Hat tip to the <a href="https://appac.github.io/mlb-data-api-docs/">MLB Data API Docs</a> from <a href="https://appac.github.io/">Chris Apparicio</a>.</small></Disclaimer>
     </>
   );
 }

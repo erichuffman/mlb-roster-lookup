@@ -24,7 +24,40 @@ function fetchTeams(season) {
     })
 }
 
+function fetchPlayer(id) {
+  return window
+    .fetch(`https://lookup-service-prod.mlb.com/json/named.player_info.bam?sport_code='mlb'&player_id='${id}'`)
+    .then(async response => {
+      const data = await response.json();
+      if (response.ok) {
+        return data;
+      } else {
+        return Promise.reject(response);
+      }
+    })
+}
+
+function fetchPlayerList(roster) {
+  const playerDetails = [];
+  roster.map((item, index) => (
+    fetchPlayer(item.id).then(
+      data => {
+        if (data.player_info.queryResults.totalSize !== 0) {
+          playerDetails[index] = data.player_info.queryResults.row;
+        }
+      },
+    )
+    .catch(error => {
+      console.warn(`There was an error finding the player (id: ${item.id}):`, error);
+    })
+  ));
+  return playerDetails;
+}
+
+
 export {
+  fetchPlayer,
+  fetchPlayerList,
   fetchRoster,
   fetchTeams,
 }
