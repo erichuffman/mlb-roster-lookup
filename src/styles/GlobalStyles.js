@@ -8,6 +8,9 @@ const GlobalVars = createGlobalStyle`
     --color-gray-lt: #d7d7d7;
     --color-gray-mid: #999999;
     --color-gray-dk: #505050;
+    --color-success: #3aaf0a;
+    --color-error: #db4308;
+    --color-loading: #3494d7;
   }
 `
 const GlobalStyles = createGlobalStyle`

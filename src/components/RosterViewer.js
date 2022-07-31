@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
-import { fetchRoster } from '../utils/mlbEndPoint';
+import { fetchRoster, fetchPlayer } from '../utils/mlbEndPoint';
 import Select from './Select';
 import Roster from './Roster';
+import ProgressMessage from './ProgressMessage';
 import './RosterViewer.css';
 
 function RosterViewer({teamOptions}) {
   const [season, setSeason] = useState(null);
   const [team, setTeam] = useState(null);
-  const [roster, setRoster] = useState(null);
+  const [roster, setRoster] = useState([]);
   const [years, setYears] = useState(null);
   const [status, setStatus] = useState(null);
 
@@ -19,31 +20,36 @@ function RosterViewer({teamOptions}) {
         data => {
           if (data.roster_team_alltime.queryResults.totalSize !== '0') {
             const roster = data.roster_team_alltime.queryResults.row;
-            setRoster(roster.map(item => (
-              {
-                name: item.name_first_last,
-                id: item.player_id,
-                position: item.primary_position,
-                bats: item.bats,
-                throws: item.throws,
-              }
-            )));
-            setStatus('roster filled');
+            roster.forEach((item, index) => {
+              fetchPlayer(item.player_id).then(
+                data => {
+                  if (data.player_info.queryResults.totalSize !== '0') {
+                    setRoster((oldRoster) => [...oldRoster, {...data.player_info.queryResults.row}]);
+                    if ((index + 1) === roster.length) {
+                      setStatus('roster filled');
+                    }
+                  }
+                },
+              )
+              .catch(error => {
+                console.warn('There was an retrieving player data:', error);
+              });
+            });
           } else {
             setStatus('empty');
-            setRoster(null);
+            setRoster([]);
           }
         },
-      )
-      .catch(error => {
-        console.warn('There was an error updating the roster:', error);
-      });
-    } else {
-      setSeason(null);
-    }
+        )
+        .catch(error => {
+          console.warn('There was an error updating the roster:', error);
+        });
+      } else {
+        setSeason(null);
+      }
     return function cleanup() {
-      setStatus('cleanup');
-      setRoster(null);
+      setStatus(null);
+      setRoster([]);
     }
   }, [season, team]);
 
@@ -81,17 +87,6 @@ function RosterViewer({teamOptions}) {
     return teamName;
   }
 
-  function StatusMessage({team, season, roster}) {
-    return (
-      <p className="roster-viewer__status-message">
-        {!team && !roster && <em>Select a team.</em>}
-        {team && !roster && !season && <em>Select a season.</em>}
-        {!roster && status === 'fetching' && <em>Getting roster...</em>}
-        {!roster && status === 'empty' && <em>No roster found for {season}.</em>}        
-      </p>
-    )
-  }
-
   return (
     <div className="roster-viewer">
       <div className="roster-viewer__options">
@@ -118,8 +113,8 @@ function RosterViewer({teamOptions}) {
         </div>
       </div>
       <div className="roster-viewer__results">
-        <StatusMessage team={team} season={season} roster={roster} />
-        {roster && <Roster roster={roster} season={season} team={provideTeamName(team)} />}
+        <ProgressMessage team={team} season={season} count={roster.length} status={status} />
+        {roster.length > 0 && status === 'roster filled' && <Roster roster={roster} season={season} team={provideTeamName(team)} />}
       </div>
     </div>
   );

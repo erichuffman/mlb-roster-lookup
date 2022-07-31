@@ -20,7 +20,9 @@ function App() {
     let date = new Date();
     fetchTeams(date.getFullYear()).then(
       data => {
-        setTeamOptions(data.team_all_season.queryResults.row?.map(item => (
+        setTeamOptions(data.team_all_season.queryResults.row
+          ?.sort((a, b) => a.name_display_brief.localeCompare(b.name_display_brief))
+          .map(item => (
           {
             id: item.mlb_org_id,
             value: item.mlb_org_id,
