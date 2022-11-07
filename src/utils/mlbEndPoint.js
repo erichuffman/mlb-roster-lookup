@@ -24,7 +24,21 @@ function fetchTeams(season) {
     })
 }
 
+function fetchPlayer(id) {
+  return window
+    .fetch(`https://lookup-service-prod.mlb.com/json/named.player_info.bam?sport_code='mlb'&player_id='${id}'`)
+    .then(async response => {
+      const data = await response.json();
+      if (response.ok) {
+        return data;
+      } else {
+        return Promise.reject(response);
+      }
+    })
+}
+
 export {
+  fetchPlayer,
   fetchRoster,
   fetchTeams,
 }
