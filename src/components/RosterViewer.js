@@ -3,7 +3,27 @@ import { fetchRoster, fetchPlayer } from '../utils/mlbEndPoint';
 import Select from './Select';
 import Roster from './Roster';
 import ProgressMessage from './ProgressMessage';
-import './RosterViewer.css';
+import styled from 'styled-components/macro';
+import { widths } from '../styles/Breakpoints';
+
+const Main = styled.div`
+  max-width: 1040px;
+  margin: 20px auto;
+  padding: 0 20px;
+`
+const Options = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+
+  .column {
+    flex: 1 0 100%;
+
+    @media (min-width: ${widths.md}) {
+      flex: 1 0 49%;
+    }
+  }
+`
 
 function RosterViewer({teamOptions}) {
   const [season, setSeason] = useState(null);
@@ -88,9 +108,9 @@ function RosterViewer({teamOptions}) {
   }
 
   return (
-    <div className="roster-viewer">
-      <div className="roster-viewer__options">
-        <div className="roster-viewer__option-col">
+    <Main>
+      <Options>
+        <div className="column">
           <Select 
             id="team-options"
             label="Team:"
@@ -100,7 +120,7 @@ function RosterViewer({teamOptions}) {
             onSelectChange={event => handleTeamChange(event.target.value)}
           />
         </div>
-        <div className="roster-viewer__option-col">
+        <div className="column">
           <Select 
             id="year-options"
             label="Season:"
@@ -111,12 +131,10 @@ function RosterViewer({teamOptions}) {
             onSelectChange={event => setSeason(event.target.value)}
           />
         </div>
-      </div>
-      <div className="roster-viewer__results">
-        <ProgressMessage team={team} season={season} count={roster.length} status={status} />
-        {roster.length > 0 && status === 'roster filled' && <Roster roster={roster} season={season} team={provideTeamName(team)} />}
-      </div>
-    </div>
+      </Options>
+      <ProgressMessage team={team} season={season} count={roster.length} status={status} />
+      {roster.length > 0 && status === 'roster filled' && <Roster roster={roster} season={season} team={provideTeamName(team)} />}
+    </Main>
   );
 }
 

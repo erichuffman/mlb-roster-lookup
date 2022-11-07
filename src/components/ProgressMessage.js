@@ -6,8 +6,27 @@ const Message = styled.p`
   align-items: center;
   display: flex;
   justify-content: center;
-  margin: 0 0 20px 0;
+  margin: 16px 0 0;
+  min-height: 24px;
+  overflow: hidden;
+  transition: min-height 500ms ease-out;
   width: 100%;
+
+  &.done {
+    min-height: 0;
+    max-height: 0;
+  }
+
+  .progress-ball,
+  .progress-text {
+    opacity: 1;
+    transition: opacity 250ms ease-out;
+  }
+
+  .progress-ball.done,
+  .progress-ball.done + .progress-text {
+    opacity: 0;
+  }
 
   .progress-text {
     font-size: 16px;
@@ -21,7 +40,6 @@ const Message = styled.p`
     
     &.setting {
       display: none;
-      
     }
 
     &.loading,
@@ -88,15 +106,15 @@ function ProgressMessage({team, season, count, status}) {
     display = 'error';
   }
   if (status === 'fetching') {
-    text = 'Loading roster...';
+    text = 'Fetching roster...';
     display = 'loading';
   }
   if (status === 'roster filled') {
-    text = 'Roster loaded!';
+    text = 'Done';
     display = 'done';
   }
   return (
-    <Message>
+    <Message className={display}>
       <span className={`progress-ball ${display}`}>
         <FaSyncAlt className="loading-icon"/>
         <FaRegCheckCircle className="success-icon"/>

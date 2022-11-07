@@ -1,55 +1,54 @@
 import * as React from 'react';
-import styled from 'styled-components/macro';
 import { getYearsOld } from '../utils/stringUtils'
+import Select from './Select';
 import Player from './Player';
-import './Roster.css';
-
-const FilterButton = styled.button`
-  background-color: ${props => props.status === 'active' ? 'var(--color-active)' : 'white'};
-  border: 2px solid darkolivegreen;
-  border-radius: 3px;
-  cursor: pointer;
-  display: inline-block;
-  margin: 0 5px;
-  padding: 5px 10px;
-`
-
-function ButtonFilter({text, status, setter}) {
-  return (
-    <FilterButton status={status} onClick={setter}>
-      { text }
-    </FilterButton>
-  );
-}
-
-function DropdownFilter({options, active, selectOption = true, setter}) {
-
-  return (
-    <select value={active} onChange={setter} className={active ? 'active' : ''}>
-      {selectOption && <option value=''>- Select -</option>}
-      {options.map(item => (
-        <option
-          defaultValue={item.value}
-          key={item.value}
-        >
-          {item.text}
-        </option>
-      ))}
-    </select>
-  )
-}
+import FilterButton from './FilterButton';
+import FilterButtonCollection from './FilterButtonCollection';
+import { Main, PlayerTable } from '../styles/Roster.styles';
 
 function Roster({roster, season, team}) {
+  // Build an array of positions from the roster.
+  const positionsArray = roster
+    .map(item => (item.primary_position_txt))
+    .reduce(
+      (unique, item) => (unique.includes(item) ? unique : [...unique, item]),
+      [],
+    )
+    .sort((a, b) => a.localeCompare(b))
+    .map(item => ({'active': true, 'text': item}));
+
+  // Handler for the button click of a position.
+  const handlePosChange = (item, index) => {
+    // Copy positions.
+    const posCopy = [...positions];
+    // Change the active value of the postion passed in. 
+    posCopy[index].active = !item.active;
+    // Set up an array to hold the active positions for 
+    // the position filter.
+    const filteredArray = [];
+    posCopy.forEach(item => {
+      if (item.active === true) {
+        // Push active positions into the array.
+        filteredArray.push(item.text);
+      }
+    });
+    // Update the positions list.
+    setPositions(posCopy);
+    // Update the position filter.
+    setPositionFilter(filteredArray);
+  };
+
   const [batsFilter, setBatsFilter] = React.useState(() => (null));
   const [throwsFilter, setThrowsFilter] = React.useState(() => null);
-  const [positionFilter, setPositionFilter] = React.useState(() => '');
+  const [positionFilter, setPositionFilter] = React.useState(() => []);
+  const [positions, setPositions] = React.useState(() => positionsArray);
   const [cobFilter, setCobFilter] = React.useState(() => '');
   const [yobFilter, setYobFilter] = React.useState(() => '');
   // Roster alpha sorted by player last name.
   const sortedRoster = roster.sort((a, b) => a.name_last.localeCompare(b.name_last));
   // Roster filterd by postion.
-  const sortedFilteredRoster = positionFilter ? sortedRoster
-    .filter((item) => (item.primary_position_txt === positionFilter))
+  const sortedFilteredRoster = positionFilter.length > 0 ? sortedRoster
+    .filter((item) => (positionFilter.includes(item.primary_position_txt)))
     : sortedRoster;
   // Bats options reduced based on sortedFilteredRoster. 
   const batsFiltered = sortedFilteredRoster.map(item => (item.bats))
@@ -72,106 +71,138 @@ function Roster({roster, season, team}) {
       [],
     )
     .sort((a, b) => a.localeCompare(b));
-
+  console.log(sortedFilteredRoster);
   return (
-    <div className="roster">
-      <p className="roster__intro">The {season} {team}</p>
-      <div>
-        <DropdownFilter
-          options={
-            roster
-            .map(item => (item.primary_position_txt))
-            .reduce(
-              (unique, item) => (unique.includes(item) ? unique : [...unique, item]),
-              [],
-            )
-            .sort((a, b) => a.localeCompare(b))
-            .map(item => (
-              {value: item, text: item}
-            ))
-          }
-          active={positionFilter}
-          setter={(e) => (setPositionFilter(e.target.value))}
-        />
+    <Main>
+      <div className="intro-wrapper">
+        <h1>The {season} {team}</h1>
       </div>
-      <div className="roster__row roster__row--filters">
-        <div className="roster__column roster__column--name roster__column--filter"></div>
-        <div className="roster__column roster__column--filter">
-          {batsFiltered.length > 1 && batsFiltered.map(item => {
-            if (item !== '') {
-              return <ButtonFilter
-                key={`bats-${item}`}
-                text={item} 
-                status={batsFilter === item ? 'active' : ''}
-                setter={() => setBatsFilter(batsFilter === item ? null : item)}
+      <FilterButtonCollection>
+        {/* Add row of checkboxes */}
+        {positions.map((item, index) => {
+          return (
+            <FilterButton 
+              text={item.text}
+              key={item.text}
+              disabled={(positionFilter.length === 1 && positionFilter[0] === item.text) ? true : false}
+              status={item.active ? 'active' : 'not-active'}
+              setter={() => handlePosChange(item, index)}
+           />
+          )
+        })}
+      </FilterButtonCollection>
+      <PlayerTable>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>
+              Primary Position
+            </th>
+            <th>
+              Bats
+              <Select 
+                id="bats-filter"
+                label="Highlight batting:"
+                emptyOption={true}
+                emptyOptionText="- All -"
+                selected={batsFilter}
+                options={
+                  batsFiltered.map((item, index) => {
+                    const value = item !== '' ? item : 'Unknown';
+                    return {id: `bats-${index}`, value: value, text: value}
+                  })
+                }
+                disabled={batsFiltered.length > 1 ? false : true}
+                onSelectChange={(e) => (setBatsFilter(e.target.value))}
+                classes={'bats-select'}
+                hiddenLabel={true}
               />
-            } else {
-              return '';
-            }
-          })}
-        </div>
-        <div className="roster__column roster__column--filter">
-          {throwsFiltered.length > 1 && throwsFiltered.map(item => (
-            <ButtonFilter
-              key={`throws-${item}`}
-              text={item} 
-              status={throwsFilter === item ? 'active' : ''}
-              setter={() => setThrowsFilter(throwsFilter === item ? null : item)}
-            />
-          ))}
-        </div>
-        <div className="roster__column roster__column--filter">
-         {birthCountryFiltered.length > 1 && <DropdownFilter
-            options={
-              birthCountryFiltered.map(item => (
-                {value: item, text: item}
-              ))
-            }
-            active={cobFilter}
-            setter={(e) => (setCobFilter(e.target.value))}
-          />}
-        </div>
-        <div className="roster__column roster__column--filter">
-          <DropdownFilter
-            options={
-              sortedFilteredRoster
-              .map((item) => {
-                return `${getYearsOld(item.birth_date)}`;
-              })
-              .reduce(
-                (unique, item) => (unique.includes(item) ? unique : [...unique, item]),
-                [],
-              )
-              .sort((a, b) => a.localeCompare(b))
-              .map(item => (
-                {value: item, text: item}
-              ))
-            }
-            active={yobFilter}
-            setter={(e) => (setYobFilter(e.target.value))}
+            </th>
+            <th>
+              Throws
+              <Select 
+                id="throws-filter"
+                label="Highlight throwing:"
+                emptyOption={true}
+                emptyOptionText="- All -"
+                selected={throwsFilter}
+                options={
+                  throwsFiltered.map((item, index) => {
+                    const value = item !== '' ? item : 'Unknown';
+                    return {id: `throws-${index}`, value: value, text: value}
+                  })
+                }
+                disabled={throwsFiltered.length > 1 ? false : true}
+                onSelectChange={(e) => (setThrowsFilter(e.target.value))}
+                classes={'throws-select'}
+                hiddenLabel={true}
+              />
+            </th>
+            <th>
+              Birth Country
+              <Select 
+                id="country-filter"
+                label="Birth Country:"
+                emptyOption={true}
+                emptyOptionText="- All -"
+                selected={cobFilter}
+                options={
+                  birthCountryFiltered.map((item, index) => {
+                    const value = item !== '' ? item : 'Unknown';
+                    return {id: `country-${index}`, value: value, text: value}
+                  })
+                }
+                disabled={birthCountryFiltered.length > 1 ? false : true}
+                onSelectChange={(e) => (setCobFilter(e.target.value))}
+                classes={'cob-select'}
+                hiddenLabel={true}
+              />
+            </th>
+            <th>
+              Age
+              <Select 
+                id="age-filter"
+                label="Age:"
+                emptyOptionText="- All -"
+                selected={yobFilter}
+                options={
+                  sortedFilteredRoster
+                  .map((item) => {
+                    const age = item.birth_date !== '' ? `${getYearsOld(item.birth_date, season)}` : 'Unknown';
+                    return age;
+                  })
+                  .reduce(
+                    (unique, item) => (unique.includes(item) ? unique : [...unique, item]),
+                    [],
+                  )
+                  .sort((a, b) => a.localeCompare(b))
+                  .map((item, index) => (
+                    {id: `age-filter-${index}`, value: item, text: item}
+                  ))
+                }
+                disabled={sortedFilteredRoster.length > 1 ? false : true}
+                onSelectChange={(e) => (setYobFilter(e.target.value))}
+                classes={'age-select'}
+                hiddenLabel={true}
+              />
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+        {sortedFilteredRoster.map(item => (
+          <Player
+            key={item.player_id}
+            info={item}
+            season={season}
+            batsFilter={batsFilter}
+            throwsFilter={throwsFilter}
+            cobFilter={cobFilter}
+            yobFilter={yobFilter}
           />
-        </div>
-      </div>
-      <div className="roster__row roster__row--header">
-        <div className="roster__column roster__column--name">Name</div>
-        <div className="roster__column">Primary Position</div>
-        <div className="roster__column">Bats</div>
-        <div className="roster__column">Throws</div>
-        <div className="roster__column"><span className="roster__column-info" title="Country of birth">Birth Country</span></div>
-        <div className="roster__column"><span className="roster__column-info" title="Year of birth">Age Today</span></div>
-      </div>
-      {sortedFilteredRoster.map(item => (
-        <Player
-          key={item.player_id}
-          info={item}
-          positionFilter={positionFilter}
-          batsFilter={batsFilter}
-          throwsFilter={throwsFilter}
-          cobFilter={cobFilter}
-          yobFilter={yobFilter}
-        />
-      ))}
-    </div>
+        ))}
+        </tbody>
+      </PlayerTable>
+    </Main>
   )
 }
 
