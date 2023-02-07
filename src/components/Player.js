@@ -30,17 +30,14 @@ const Row = styled.tr`
 `
 
 function Player({info, season, batsFilter, throwsFilter, cobFilter, yobFilter}) {
-  const dobFull = info.birth_date !== '' ? new Date(info.birth_date) : info.birth_date;
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
-  const dob = info.birth_date !== '' ? 
-    `${dobFull.getMonth() + 1}/${dobFull.getDate()}/${dobFull.getFullYear()}` : 
-    null;
   const batsClasses = ((batsFilter === info.bats && info.bats !== '') || (batsFilter === 'Unknown' && info.bats === '')) ? 'active': '';
   const throwsClasses = ((throwsFilter === info.throws && info.throws !== '') || (throwsFilter === 'Unknown' && info.throws === '')) ? 'active': '';
   const cobClasses = ((cobFilter === info.birth_country && info.birth_country !== '') || (cobFilter === 'Unknown' && info.birth_country === '')) ? 'active': '';
   const yobClasses = ((yobFilter === `${getYearsOld(info.birth_date, season)}` && info.birth_date !== '') || (yobFilter === 'Unknown' && info.birth_date === ''))? 'active': '';
-  
+  const deathDate = info.death_date !== '' ? new Date(info.death_date) : null;
+  const todayAge = deathDate ? `(died: ${deathDate.getMonth() + 1}/${deathDate.getDate()}/${deathDate.getFullYear()})` : `(age today: ${info.age})`;
   const rowStatus = (
     batsClasses === 'active' ||
     throwsClasses === 'active' ||
@@ -60,7 +57,7 @@ function Player({info, season, batsFilter, throwsFilter, cobFilter, yobFilter}) 
       data-id={info.player_id}
       data-active={rowStatus}
       data-highlighting={highlightingStatus}
-      data-dob={dob ? dob : 'Unknown'}
+      data-dob={info.birth_date !== '' ? info.birth_date : 'Unknown'}
     >
       <td data-header="name">
         <a href={`https://mlb.com/player/${info.player_id}`}>{info.name_display_first_last}</a>
@@ -78,7 +75,7 @@ function Player({info, season, batsFilter, throwsFilter, cobFilter, yobFilter}) 
         {info.birth_country !== '' ? info.birth_country : <em>Unknown</em>}
       </td>
       <td className={yobClasses} data-header="age">
-        {info.birth_date !== '' && <span className="cell-content" title={`Age during the ${season} season. Age today: ${getYearsOld(info.birth_date, currentYear)}`}>
+        {info.birth_date !== '' && <span className="cell-content" title={`Age during the ${season} season. ${todayAge}`}>
           {getYearsOld(info.birth_date, season)}
           <span className="cell-asterisk">
             <FaAsterisk />

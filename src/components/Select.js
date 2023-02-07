@@ -7,11 +7,13 @@ const Wrapper = styled.div`
   flex-wrap: wrap;
 
   select {
+    appearance: none;
     background: none;
     background-color: white;
     border: 2px solid var(--color-gray-mid);
     border-radius: 3px;
     color: var(--color-gray-dk);
+    cursor: pointer;
     flex: 1 0 100%;
     font-size: 16px;
     padding: 4px;
