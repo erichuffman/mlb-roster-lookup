@@ -71,7 +71,7 @@ function Roster({roster, season, team}) {
       [],
     )
     .sort((a, b) => a.localeCompare(b));
-  console.log(sortedFilteredRoster);
+
   return (
     <Main>
       <div className="intro-wrapper">
@@ -142,7 +142,7 @@ function Roster({roster, season, team}) {
               Birth Country
               <Select 
                 id="country-filter"
-                label="Birth Country:"
+                label="Highlight a Birth Country:"
                 emptyOption={true}
                 emptyOptionText="- All -"
                 selected={cobFilter}
@@ -162,7 +162,7 @@ function Roster({roster, season, team}) {
               Age
               <Select 
                 id="age-filter"
-                label="Age:"
+                label="Highlight an Age:"
                 emptyOptionText="- All -"
                 selected={yobFilter}
                 options={
