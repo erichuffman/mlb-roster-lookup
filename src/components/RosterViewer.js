@@ -3,6 +3,7 @@ import { fetchRoster, fetchPlayer } from '../utils/mlbEndPoint';
 import Select from './Select';
 import Roster from './Roster';
 import ProgressMessage from './ProgressMessage';
+import { teamHistory } from '../utils/teamHistory';
 import styled from 'styled-components/macro';
 import { widths } from '../styles/Breakpoints';
 
@@ -91,20 +92,41 @@ function RosterViewer({teamOptions}) {
         text: i,
       }
     }
-    setYears(yearOptions);
+    setYears(yearOptions.reverse());
     if (season < startYear) {
       setSeason('');
     }
   };
 
-  function provideTeamName(teamID) {
-    let teamName; 
+  function provideTeamName(teamID, season) {
+    let teamName = null;
+    let teamLocation = null;
+    const year = parseInt(season);
     teamOptions.forEach(item => {
       if(item.id === teamID) {
         teamName = item.text;
       }
     });
-    return teamName;
+    teamHistory.forEach(team => {
+      if (team.id === teamID) {
+        team.names.forEach(name => {
+          if (year >= name.start && year <= name.end) {
+            if (name.name !== team.current_name) {
+              teamName = `${team.current_name} [${name.name}]`;
+            }
+            if (name.location !== team.current_location) {
+              teamLocation = name.location;
+            }
+          }
+        })
+      }
+    });
+    if (teamLocation) {
+      return `[${teamLocation}] ${teamName}`
+    }
+    else {
+      return teamName;
+    }
   }
 
   return (
@@ -133,7 +155,7 @@ function RosterViewer({teamOptions}) {
         </div>
       </Options>
       <ProgressMessage team={team} season={season} count={roster.length} status={status} />
-      {roster.length > 0 && status === 'roster filled' && <Roster roster={roster} season={season} team={provideTeamName(team)} />}
+      {roster.length > 0 && status === 'roster filled' && <Roster roster={roster} season={season} team={provideTeamName(team, season)} />}
     </Main>
   );
 }
