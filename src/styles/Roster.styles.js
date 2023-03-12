@@ -65,8 +65,14 @@ const PlayerTable = styled.table`
 
   th {
     background-color: var(--color-gray-xlt);
-    border: 1px solid var(--color-gray-mid);
+    box-shadow: inset 0px 0px 0px 1px var(--color-gray-mid);
     padding: 12px;
+
+    @media (min-width: 768px) {
+      position: sticky;
+      top: -1px;
+      z-index: 2;
+    }
   }
 
   td {

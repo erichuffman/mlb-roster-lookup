@@ -30,8 +30,6 @@ const Row = styled.tr`
 `
 
 function Player({info, season, batsFilter, throwsFilter, cobFilter, yobFilter}) {
-  const currentDate = new Date();
-  const currentYear = currentDate.getFullYear();
   const batsClasses = ((batsFilter === info.bats && info.bats !== '') || (batsFilter === 'Unknown' && info.bats === '')) ? 'active': '';
   const throwsClasses = ((throwsFilter === info.throws && info.throws !== '') || (throwsFilter === 'Unknown' && info.throws === '')) ? 'active': '';
   const cobClasses = ((cobFilter === info.birth_country && info.birth_country !== '') || (cobFilter === 'Unknown' && info.birth_country === '')) ? 'active': '';
@@ -75,7 +73,7 @@ function Player({info, season, batsFilter, throwsFilter, cobFilter, yobFilter}) 
         {info.birth_country !== '' ? info.birth_country : <em>Unknown</em>}
       </td>
       <td className={yobClasses} data-header="age">
-        {info.birth_date !== '' && <span className="cell-content" title={`Age during the ${season} season. ${todayAge}`}>
+        {info.birth_date !== '' && <span className="cell-content" title={`Age during the ${season} season ${todayAge}`}>
           {getYearsOld(info.birth_date, season)}
           <span className="cell-asterisk">
             <FaAsterisk />
