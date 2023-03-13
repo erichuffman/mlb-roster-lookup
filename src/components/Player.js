@@ -1,31 +1,15 @@
 import * as React from 'react';
 import styled from 'styled-components/macro';
 import { getYearsOld } from '../utils/stringUtils';
-import { FaAsterisk } from 'react-icons/fa';
+import PlayerAge from './PlayerAge';
 
 const Row = styled.tr`
   border-top: 1px solid gray;
-
-  td {
-    overflow: hidden;
-    position: relative;
-  }
 
   td.active {
     background-color: var(--color-bright-blue);
     border-color: white;
     color: white;
-  }
-
-  .cell-content {
-    cursor: help;
-    display: flex;
-  }
-
-  .cell-asterisk {
-    color: var(--color-dk-blue);
-    font-size: 8px;
-    margin-left: 2px;
   }
 `
 
@@ -34,8 +18,6 @@ function Player({info, season, batsFilter, throwsFilter, cobFilter, yobFilter}) 
   const throwsClasses = ((throwsFilter === info.throws && info.throws !== '') || (throwsFilter === 'Unknown' && info.throws === '')) ? 'active': '';
   const cobClasses = ((cobFilter === info.birth_country && info.birth_country !== '') || (cobFilter === 'Unknown' && info.birth_country === '')) ? 'active': '';
   const yobClasses = ((yobFilter === `${getYearsOld(info.birth_date, season)}` && info.birth_date !== '') || (yobFilter === 'Unknown' && info.birth_date === ''))? 'active': '';
-  const deathDate = info.death_date !== '' ? new Date(info.death_date) : null;
-  const todayAge = deathDate ? `(died: ${deathDate.getMonth() + 1}/${deathDate.getDate()}/${deathDate.getFullYear()})` : `(age today: ${info.age})`;
   const rowStatus = (
     batsClasses === 'active' ||
     throwsClasses === 'active' ||
@@ -73,13 +55,12 @@ function Player({info, season, batsFilter, throwsFilter, cobFilter, yobFilter}) 
         {info.birth_country !== '' ? info.birth_country : <em>Unknown</em>}
       </td>
       <td className={yobClasses} data-header="age">
-        {info.birth_date !== '' && <span className="cell-content" title={`Age during the ${season} season ${todayAge}`}>
-          {getYearsOld(info.birth_date, season)}
-          <span className="cell-asterisk">
-            <FaAsterisk />
-          </span>
-        </span>}
-        {info.birth_date === '' && <em>Unknown</em>}
+        <PlayerAge
+          birthDate={info.birth_date}
+          deathDate={info.death_date}
+          currentAge={info.age}
+          season={season}
+        />
       </td>
     </Row>
   )

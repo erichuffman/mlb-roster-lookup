@@ -10,13 +10,18 @@ const Wrapper = styled.div`
     appearance: none;
     background: none;
     background-color: white;
+    background-image: url('/images/down-arrow.svg');
+    background-position-x: calc(100% - 5px);
+    background-position-y: 50%;
+    background-repeat: no-repeat;
+    background-size: 14px;
     border: 2px solid var(--color-gray-mid);
     border-radius: 3px;
     color: var(--color-gray-dk);
     cursor: pointer;
     flex: 1 0 100%;
     font-size: 16px;
-    padding: 4px;
+    padding: 4px 25px 4px 4px;
 
     &:focus {
       outline-width: 2px;
