@@ -10,7 +10,7 @@ const Wrapper = styled.div`
     appearance: none;
     background: none;
     background-color: white;
-    background-image: url('/images/down-arrow.svg');
+    background-image: url('./images/down-arrow.svg');
     background-position-x: calc(100% - 5px);
     background-position-y: 50%;
     background-repeat: no-repeat;
