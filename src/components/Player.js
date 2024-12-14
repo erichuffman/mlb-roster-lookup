@@ -12,19 +12,18 @@ const Row = styled.tr`
     color: white;
   }
 `
-
 function Player({info, season, batsFilter, throwsFilter, cobFilter, yobFilter}) {
-  const batsClasses = ((batsFilter === info.bats && info.bats !== '') || (batsFilter === 'Unknown' && info.bats === '')) ? 'active': '';
-  const throwsClasses = ((throwsFilter === info.throws && info.throws !== '') || (throwsFilter === 'Unknown' && info.throws === '')) ? 'active': '';
-  const cobClasses = ((cobFilter === info.birth_country && info.birth_country !== '') || (cobFilter === 'Unknown' && info.birth_country === '')) ? 'active': '';
-  const yobClasses = ((yobFilter === `${getYearsOld(info.birth_date, season)}` && info.birth_date !== '') || (yobFilter === 'Unknown' && info.birth_date === ''))? 'active': '';
+  const batsClasses = ((batsFilter === info.batsHand.code && info.batsHand.code !== '') || (batsFilter === 'Unknown' && info.batsHand.code === '')) ? 'active': '';
+  const throwsClasses = ((throwsFilter === info.throwsHand.code && info.throwsHand.code !== '') || (throwsFilter === 'Unknown' && info.throwsHand.code === '')) ? 'active': '';
+  const cobClasses = ((cobFilter === info.birthCountry && info.birthCountry !== '') || (cobFilter === 'Unknown' && info.birthCountry === '')) ? 'active': '';
+  const yobClasses = ((yobFilter === `${getYearsOld(info.birthDate, season)}` && info.birthDate !== '') || (yobFilter === 'Unknown' && info.birthDate === ''))? 'active': '';
   const rowStatus = (
     batsClasses === 'active' ||
     throwsClasses === 'active' ||
     cobClasses === 'active' ||
     yobClasses === 'active'
   ) ? 'true' : 'false';
-
+  
   const highlightingStatus = (
     batsFilter ||
     throwsFilter ||
@@ -34,31 +33,31 @@ function Player({info, season, batsFilter, throwsFilter, cobFilter, yobFilter}) 
 
   return (
     <Row
-      data-id={info.player_id}
+      data-id={info.id}
       data-active={rowStatus}
       data-highlighting={highlightingStatus}
-      data-dob={info.birth_date !== '' ? info.birth_date : 'Unknown'}
+      data-dob={info.birthDate !== '' ? info.birthDate : 'Unknown'}
     >
       <td data-header="name">
-        <a href={`https://mlb.com/player/${info.player_id}`}>{info.name_display_first_last}</a>
+        <a href={`https://mlb.com/player/${info.id}`}>{info.nameFirstLast}</a>
       </td>
       <td data-header="position">
-        {info.primary_position_txt}
+        {info.seasonPosition.abbreviation}
       </td>
       <td className={batsClasses} data-header="bats">
-        {info.bats !== '' ? info.bats : <em>Unknown</em>}
+        {info.batsHand !== '' ? info.batsHand.code : <em>Unknown</em>}
       </td>
       <td className={throwsClasses} data-header="throws">
-        {info.throws !== '' ? info.throws : <em>Unknown</em>}
+        {info.throwsHand !== '' ? info.throwsHand.code : <em>Unknown</em>}
       </td>
       <td className={cobClasses} data-header="birth country">
-        {info.birth_country !== '' ? info.birth_country : <em>Unknown</em>}
+        {info.birthCountry !== '' ? info.birthCountry : <em>Unknown</em>}
       </td>
       <td className={yobClasses} data-header="age">
         <PlayerAge
-          birthDate={info.birth_date}
-          deathDate={info.death_date}
-          currentAge={info.age}
+          birthDate={info.birthDate ? info.birthDate : null}
+          deathDate={info.deathDate ? info.deathDate : null}
+          currentAge={info.currentAge ? info.currentAge : null }
           season={season}
         />
       </td>

@@ -96,12 +96,15 @@ const Message = styled.p`
 `
 
 function ProgressMessage({team, season, count, status}) {
-  let text = 'Select a team.';
-  let display = 'setting';
+  let text = '';
+  let display = '';
+  if (!team && !season && count === 0) {
+    text = 'Select a team.';
+  }
   if (team && count === 0 && !season) {
     text = 'Select a season.';
   }
-  if (team && count === 0 && season) {
+  if (team && season && count === 0  && status === 'not found') {
     text = `No roster found for ${season}.`;
     display = 'error';
   }
