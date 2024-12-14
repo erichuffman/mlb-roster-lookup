@@ -1,6 +1,9 @@
-function fetchRoster(start, end, teamID) {
+const baseUrl =  `https://statsapi.mlb.com/api/`; 
+const apiV = `v1/`;
+
+function fetchRoster(start, teamID) {
   return window
-    .fetch(`https://lookup-service-prod.mlb.com/json/named.roster_team_alltime.bam?start_season='${start}'&end_season='${end}'&team_id='${teamID}'`)
+    .fetch(`${baseUrl}${apiV}teams/${teamID}/roster?season=${start}`)
     .then(async response => {
       const data = await response.json();
       if (response.ok) {
@@ -8,12 +11,12 @@ function fetchRoster(start, end, teamID) {
       } else {
         return Promise.reject(response);
       }
-    })
+    });
 }
 
 function fetchTeams(season) {
   return window
-    .fetch(`https://lookup-service-prod.mlb.com/json/named.team_all_season.bam?sport_code='mlb'&all_star_sw='N'&sort_order=name_asc&season='${season}'`)
+    .fetch(`${baseUrl}${apiV}teams?sportId=1&season=${season}`)
     .then(async response => {
       const data = await response.json();
       if (response.ok) {
@@ -26,7 +29,7 @@ function fetchTeams(season) {
 
 function fetchPlayer(id) {
   return window
-    .fetch(`https://lookup-service-prod.mlb.com/json/named.player_info.bam?sport_code='mlb'&player_id='${id}'`)
+    .fetch(`${baseUrl}${apiV}people/${id}`)
     .then(async response => {
       const data = await response.json();
       if (response.ok) {
