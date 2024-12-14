@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { usePopper } from 'react-popper';
 import { getYearsOld } from '../utils/stringUtils';
 import styled from 'styled-components/macro';
-import { GiPirateGrave } from 'react-icons/gi';
 
 const AgeInfo = styled.div`
   position: relative;
@@ -72,9 +71,10 @@ const Tooltip = styled.span`
 `;
 
 function PlayerAge({birthDate, deathDate, currentAge, season}) {
-  const seasonAge = getYearsOld(birthDate, season);
-  const deathDay = deathDate !== '' ? new Date(deathDate) : null;
-  const todayAge = deathDate ? `(died: ${deathDay.getMonth() + 1}/${deathDay.getDate()}/${deathDay.getFullYear()})` : `(age today: ${currentAge})`;
+  const seasonAge = birthDate ? getYearsOld(birthDate, season) : 'unknown';
+  const deceased = deathDate !== null ? new Date(deathDate) : null;
+  const todayAge = currentAge < 100 ? `Current age: ${currentAge}` : '';
+  const currentAgeOrDeath = deathDate ? `(died in ${deceased.getFullYear()} at ${currentAge} years old)` : todayAge;
   const [referenceElement, setReferenceElement] = useState(null);
   const [popperElement, setPopperElement] = useState(null);
   const [arrowElement, setArrowElement] = useState(null);
@@ -106,8 +106,8 @@ function PlayerAge({birthDate, deathDate, currentAge, season}) {
 
   return (
     <>
-      {birthDate === '' && <em>Unknown</em>}
-      {birthDate !== '' &&
+      {birthDate === null && <em>Unknown</em>}
+      {birthDate !== null &&
         <AgeInfo>
           <button
             ref={setReferenceElement}
@@ -117,10 +117,9 @@ function PlayerAge({birthDate, deathDate, currentAge, season}) {
             onBlur={hideTooltip}
           >
             <span className="age">{seasonAge}</span>
-            {deathDay && <span className="icon icon--grave" aria-hidden="true"><GiPirateGrave /></span>}
           </button>
           <Tooltip ref={setPopperElement} style={styles.popper} {...attributes.popper}>
-            Age during the {season} season {todayAge}
+            Age during the {season} season {currentAgeOrDeath}
             <span ref={setArrowElement} style={styles.arrow} className="arrow" />
           </Tooltip>
         </AgeInfo>

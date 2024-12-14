@@ -33,6 +33,12 @@ const teamHistory = [
     ]
   },
   {
+    id: '109',
+    roster_start: 1998,
+    current_name: 'Diamondbacks',
+    current_location: 'Arizona',
+  },
+  {
     id: '117',
     roster_start: 1962,
     current_name: 'Astros',
@@ -77,6 +83,12 @@ const teamHistory = [
         location: 'Oakland',
       }
     ]
+  },
+  {
+    id: '135',
+    roster_start: 1969,
+    current_name: 'Padres',
+    current_location: 'San Diego',
   },
   {
     id: '144',
@@ -158,7 +170,7 @@ const teamHistory = [
   },
   {
     id: '137',
-    roster_start: 1969,
+    roster_start: 1883,
     current_name: 'Giants',
     current_location: 'San Francisco',
     names: [
@@ -213,6 +225,12 @@ const teamHistory = [
         location: 'Cleveland',
       }
     ]
+  },
+  {
+    id: '115',
+    roster_start: 1993,
+    current_name: 'Rockies',
+    current_location: 'Colorado',
   },
   {
     id: '146',
@@ -282,7 +300,7 @@ const teamHistory = [
   },
   {
     id: '140',
-    roster_start: 1901,
+    roster_start: 1961,
     current_name: 'Rangers',
     current_location: 'Texas',
     names: [

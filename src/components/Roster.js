@@ -5,18 +5,9 @@ import Player from './Player';
 import FilterButton from './FilterButton';
 import FilterButtonCollection from './FilterButtonCollection';
 import { Main, PlayerTable } from '../styles/Roster.styles';
+import TeamName from './TeamName';
 
-function Roster({roster, season, team}) {
-  // Build an array of positions from the roster.
-  const positionsArray = roster
-    .map(item => (item.primary_position_txt))
-    .reduce(
-      (unique, item) => (unique.includes(item) ? unique : [...unique, item]),
-      [],
-    )
-    .sort((a, b) => a.localeCompare(b))
-    .map(item => ({'active': true, 'text': item}));
-
+function Roster({roster, positionsList, season, team}) {
   // Handler for the button click of a position.
   const handlePosChange = (item, index) => {
     // Copy positions.
@@ -41,31 +32,31 @@ function Roster({roster, season, team}) {
   const [batsFilter, setBatsFilter] = React.useState(() => (null));
   const [throwsFilter, setThrowsFilter] = React.useState(() => null);
   const [positionFilter, setPositionFilter] = React.useState(() => []);
-  const [positions, setPositions] = React.useState(() => positionsArray);
+  const [positions, setPositions] = React.useState(() => positionsList);
   const [cobFilter, setCobFilter] = React.useState(() => '');
   const [yobFilter, setYobFilter] = React.useState(() => '');
   // Roster alpha sorted by player last name.
-  const sortedRoster = roster.sort((a, b) => a.name_last.localeCompare(b.name_last));
+  const sortedRoster = roster.sort((a, b) => a.lastName.localeCompare(b.lastName));
   // Roster filterd by postion.
   const sortedFilteredRoster = positionFilter.length > 0 ? sortedRoster
-    .filter((item) => (positionFilter.includes(item.primary_position_txt)))
+    .filter((item) => (positionFilter.includes(item.seasonPosition.abbreviation)))
     : sortedRoster;
-  // Bats options reduced based on sortedFilteredRoster. 
-  const batsFiltered = sortedFilteredRoster.map(item => (item.bats))
+  // Bats options reduced based on sortedFilteredRoster.
+  const batsFiltered = sortedFilteredRoster.map(item => (item.batsHand.code))
     .reduce(
       (unique, item) => (unique.includes(item) ? unique : [...unique, item]),
       [],
     )
     .sort((a, b) => a.localeCompare(b));
   // Throws options reduced based on sortedFilteredRoster. 
-  const throwsFiltered = sortedFilteredRoster.map(item => (item.throws))
+  const throwsFiltered = sortedFilteredRoster.map(item => (item.throwsHand.code))
     .reduce(
       (unique, item) => (unique.includes(item) ? unique : [...unique, item]),
       [],
     )
     .sort((a, b) => a.localeCompare(b));
-  // Birth country options reduced based on sortedFilteredRoster. 
-  const birthCountryFiltered = sortedFilteredRoster.map(item => (item.birth_country))
+  // Birth country options reduced based on sortedFilteredRoster.
+  const birthCountryFiltered = sortedFilteredRoster.map(item => (item.birthCountry))
     .reduce(
       (unique, item) => (unique.includes(item) ? unique : [...unique, item]),
       [],
@@ -75,10 +66,9 @@ function Roster({roster, season, team}) {
   return (
     <Main>
       <div className="intro-wrapper">
-        <h1>The {season} {team}</h1>
+         {team && <TeamName season={season} team={team} />}
       </div>
       <FilterButtonCollection>
-        {/* Add row of checkboxes */}
         {positions.map((item, index) => {
           return (
             <FilterButton 
@@ -168,7 +158,7 @@ function Roster({roster, season, team}) {
                 options={
                   sortedFilteredRoster
                   .map((item) => {
-                    const age = item.birth_date !== '' ? `${getYearsOld(item.birth_date, season)}` : 'Unknown';
+                    const age = item.birthDate !== undefined ? `${getYearsOld(item.birthDate, season)}` : 'Unknown';
                     return age;
                   })
                   .reduce(
@@ -191,7 +181,7 @@ function Roster({roster, season, team}) {
         <tbody>
         {sortedFilteredRoster.map(item => (
           <Player
-            key={item.player_id}
+            key={item.id}
             info={item}
             season={season}
             batsFilter={batsFilter}

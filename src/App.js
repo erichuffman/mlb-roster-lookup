@@ -16,19 +16,23 @@ function App() {
     return null;
   });
 
+  const copyrightDate = new Date();
+
   useEffect(() => {
     let date = new Date();
     fetchTeams(date.getFullYear()).then(
       data => {
-        setTeamOptions(data.team_all_season.queryResults.row
-          ?.sort((a, b) => a.name_display_brief.localeCompare(b.name_display_brief))
+        setTeamOptions(data.teams
+          ?.sort((a, b) => a.name.localeCompare(b.name))
           .map(item => (
           {
-            id: item.mlb_org_id,
-            value: item.mlb_org_id,
-            text: item.name_display_brief,
-            first_year_of_play: item.first_year_of_play,
-            last_year_of_play: item.last_year_of_play,
+            id: item.id,
+            value: item.id,
+            text: item.name,
+            name: item.clubName,
+            location: item.franchiseName,
+            first_year_of_play: parseInt(item.firstYearOfPlay),
+            last_year_of_play: item.season,
           }
         )));
       },
@@ -37,13 +41,12 @@ function App() {
       console.warn('There was an error creating the team options:', error);
     });
   }, []);
-
   return (
     <>
       <GlobalVars />
       <GlobalStyles />
       {teamOptions && <RosterViewer teamOptions={teamOptions} />}
-      <Disclaimer><small>Data copyright by MLB Advanced Media, L.P. Hat tip to the <a href="https://appac.github.io/mlb-data-api-docs/">MLB Data API Docs</a> from <a href="https://appac.github.io/">Chris Apparicio</a>.</small></Disclaimer>
+      <Disclaimer><small>Data presented copyright {copyrightDate.getFullYear()} MLB Advanced Media, L.P.<br />Use of any content on this page acknowledges agreement to <a href="http://gdx.mlb.com/components/copyright.txt">their terms</a>.</small></Disclaimer>
     </>
   );
 }
