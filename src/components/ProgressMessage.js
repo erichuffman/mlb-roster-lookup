@@ -9,7 +9,7 @@ const Message = styled.p`
   margin: 16px 0 0;
   min-height: 24px;
   overflow: hidden;
-  transition: min-height 500ms ease-out;
+  transition: min-height 250ms ease-out;
   width: 100%;
 
   &.done {
@@ -20,7 +20,6 @@ const Message = styled.p`
   .progress-ball,
   .progress-text {
     opacity: 1;
-    transition: opacity 250ms ease-out;
   }
 
   .progress-ball.done,
@@ -109,7 +108,7 @@ function ProgressMessage({team, season, count, status}) {
     display = 'error';
   }
   if (status === 'fetching') {
-    text = 'Fetching roster...';
+    text = 'Loading roster...';
     display = 'loading';
   }
   if (status === 'roster filled') {
