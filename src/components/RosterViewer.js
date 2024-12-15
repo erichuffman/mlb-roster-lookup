@@ -42,7 +42,6 @@ function RosterViewer({teamOptions}) {
         data => {
           if (data.roster) {
             setRoster(data.roster);
-            setStatus('fetching');
           } else {
             setStatus('not found');
           }
@@ -137,6 +136,9 @@ function RosterViewer({teamOptions}) {
     setYears(yearOptions.reverse());
     if (season < startYear) {
       setSeason('');
+    }
+    else {
+      setStatus('fetching');
     }
   };
 
