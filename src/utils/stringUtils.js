@@ -9,11 +9,12 @@ function getYearsOld(date, seasonYear) {
 
 function teamNameLookup(teamNameDetails, teamID, season) {
   console.log('season in lookup', season);
+  teamNameDetails.franchiseHistory = null;
   teamNameDetails.legacyName = null;
   teamNameDetails.legacyLocation = null;
   teamHistory.forEach(team => {
     if (team.id === teamID && team.names) {
-      console.log(team);
+      teamNameDetails.franchiseHistory = team.names;
       team.names.forEach(name => {
         if (season >= name.start && season <= name.end) {
           console.log('found a match', name.name, name.location);

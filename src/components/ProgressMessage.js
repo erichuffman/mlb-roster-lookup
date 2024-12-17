@@ -13,8 +13,9 @@ const Message = styled.p`
   width: 100%;
 
   &.done {
-    min-height: 0;
+    margin: 0;
     max-height: 0;
+    min-height: 0;
   }
 
   .progress-ball,

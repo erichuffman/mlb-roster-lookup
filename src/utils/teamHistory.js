@@ -144,7 +144,7 @@ const teamHistory = [
   },
   {
     id: '119',
-    roster_start: 1969,
+    roster_start: 1884,
     current_name: 'Dodgers',
     current_location: 'Los Angeles',
     names: [
@@ -305,7 +305,7 @@ const teamHistory = [
     current_location: 'Texas',
     names: [
       {
-        start: 1901,
+        start: 1961,
         end: 1971,
         name: 'Senators',
         location: 'Washington, D.C.',
