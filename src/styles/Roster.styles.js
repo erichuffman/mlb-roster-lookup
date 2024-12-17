@@ -9,7 +9,6 @@ const Main = styled.main`
   .intro-wrapper {
     display: flex;
     flex-wrap: wrap;
-    margin-bottom: 16px;
 
     @media (min-width: ${widths.md}) {
       align-items: center;
@@ -25,8 +24,6 @@ const Main = styled.main`
     
     @media (min-width: ${widths.md}) {
       font-size: 28px;
-      margin: 0 16px 0 0;
-      padding: 0 16px 0 0;
     }
   }
 
